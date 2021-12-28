@@ -1,0 +1,28 @@
+name: GhostLife
+version: ${project.version}
+main: com.github.sirokuri_.ghostlife.ghostlife
+api-version: 1.15
+authors: [ghost_46]
+description: LIFE plugin
+softdepend:
+  - Vault
+
+commands:
+  ghostlife:
+    description: コンフィグリロード
+  adddamege:
+    description: ダメージセット
+  sellmmgui:
+    description: MMアイテム売却
+  smg:
+    description: MMアイテム売却
+  playerskullgive:
+    description: playerhead配布
+
+permissions:
+  ghostlife.set.op:
+    default: op
+  adddamage.set.op:
+    default: op
+  playerskullgive.set.op:
+    default: op
