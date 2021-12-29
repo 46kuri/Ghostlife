@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.util.*;
@@ -69,28 +70,39 @@ public final class ghostlife extends JavaPlugin implements Listener {
         if (inventory == null) return;
         InventoryHolder inventoryHolder = inventory.getHolder();
         if(!(inventoryHolder instanceof MyHolder)) return;
-        if (slot.getType() == Material.GREEN_STAINED_GLASS_PANE) {
-            if (slot.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&aSHOPを開く"))) {
-                Inventory mirror = Bukkit.createInventory(new MyHolder("holder2"), 54, "§cSELLMMITEM SHOP");
-                Location loc = player.getLocation();
-                player.playSound(loc,Sound.BLOCK_CHEST_OPEN, 2, 1);
-                player.openInventory(mirror);
+        MyHolder holder = (MyHolder) inventoryHolder;
+        if(holder.tags.get(0).equals("holder1")) {
+            if (slot.getType() == Material.GREEN_STAINED_GLASS_PANE) {
+                if (slot.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&aSHOPを開く"))) {
+                    Inventory mirror = Bukkit.createInventory(new MyHolder("holder2"), 54, "§cSELLMMITEM SHOP");
+                    Location loc = player.getLocation();
+                    player.playSound(loc, Sound.BLOCK_CHEST_OPEN, 2, 1);
+                    player.openInventory(mirror);
+                }
+            } else if (slot.getType() == Material.RED_STAINED_GLASS_PANE) {
+                if (slot.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&cSHOPを閉じる"))) {
+                    player.closeInventory();
+                    Location loc = player.getLocation();
+                    player.playSound(loc, Sound.BLOCK_CHEST_CLOSE, 2, 1);
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cSELLMMSHOP&fを閉じました"));
+                }
+            } else if (slot.getType() == Material.BLACK_STAINED_GLASS_PANE) {
+                if (slot.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&8売却可能アイテム一覧を表示する"))) {
+                    player.closeInventory();
+                    Location loc = player.getLocation();
+                    player.playSound(loc, Sound.ENTITY_PLAYER_LEVELUP, 2, 1);
+                    String sellItemDisplay = getConfig().getString("SellItemDisplay");
+                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', "" + sellItemDisplay));
+                }
+            } else if (slot.getType() == Material.YELLOW_STAINED_GLASS_PANE) {
+                if (slot.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&eSHOP注意点"))) {
+                    Location loc = player.getLocation();
+                    player.playSound(loc, Sound.ENTITY_VILLAGER_NO, 2, 1);
+                    e.setCancelled(true);
+                }
+            } else {
+                return;
             }
-        }else if (slot.getType() == Material.RED_STAINED_GLASS_PANE) {
-            if (slot.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&cSHOPを閉じる"))) {
-                player.closeInventory();
-                Location loc = player.getLocation();
-                player.playSound(loc, Sound.BLOCK_CHEST_CLOSE, 2, 1);
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&cSELLMMSHOP&fを閉じました"));
-            }
-        }else if(slot.getType() == Material.BLACK_STAINED_GLASS_PANE){
-            if(slot.getItemMeta().getDisplayName().equals(ChatColor.translateAlternateColorCodes('&', "&8売却可能アイテム一覧を表示する"))){
-                player.closeInventory();
-                String sellItemDisplay = getConfig().getString("SellItemDisplay");
-                player.sendMessage(ChatColor.translateAlternateColorCodes('&',"" + sellItemDisplay));
-            }
-        } else {
-            e.setCancelled(true);
         }
     }
 
@@ -102,6 +114,18 @@ public final class ghostlife extends JavaPlugin implements Listener {
         if(inventoryHolder == null) return;
         if(!(inventoryHolder instanceof MyHolder)) return;
         MyHolder holder = (MyHolder) inventoryHolder;
+        if(holder.tags.get(0).equals("holder1")){
+            ItemStack[] contents = inventory.getContents();
+            for (int i = 0; i < 9; i++) {
+                ItemStack content = contents[i];
+                if (content == null) {
+                    continue;
+                }
+                if(!(content.getType() == Material.GREEN_STAINED_GLASS_PANE || content.getType() == Material.RED_STAINED_GLASS_PANE || content.getType() == Material.BLACK_STAINED_GLASS_PANE || content.getType() == Material.YELLOW_STAINED_GLASS_PANE)) {
+                    player.getInventory().addItem(content);
+                }
+            }
+        }
         if(holder.tags.get(0).equals("holder2")){
             ItemStack[] contents = inventory.getContents();
             List<String> itemDisplayNameList = new ArrayList<>();
