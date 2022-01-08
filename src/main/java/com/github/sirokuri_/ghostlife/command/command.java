@@ -31,60 +31,55 @@ public class command implements CommandExecutor {
             }
             if (args[0].equalsIgnoreCase("reload")) {
                 //OP以外起動しないように設定
-                if (sender.hasPermission("set.op")) {
+                if (sender.hasPermission("GhostLifeCommand.permission.Admin")) {
                     plugin.reloadConfig();
                     p.sendMessage("configリロードしました");
-                } else {
-                    sender.sendMessage("権限者のみ使えます");
                 }
                 return true;
             }
         }
 
         if (cmd.getName().equalsIgnoreCase("playerskullgive")) {
-            if (!sender.hasPermission("set.op")) {
-                sender.sendMessage("コマンドを実行出来る権限がありません。");
-                return true;
+            if (sender.hasPermission("GhostLifeCommand.permission.Admin")) {
+                ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
+                SkullMeta skull = (SkullMeta) item.getItemMeta();
+                skull.setDisplayName(p.getName());
+                skull.setOwner(p.getName());
+                item.setItemMeta(skull);
+                p.getInventory().addItem(item);
             }
-            ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1, (short) 3);
-            SkullMeta skull = (SkullMeta) item.getItemMeta();
-            skull.setDisplayName(p.getName());
-            skull.setOwner(p.getName());
-            item.setItemMeta(skull);
-            p.getInventory().addItem(item);
+            return true;
         }
 
         if (cmd.getName().equalsIgnoreCase("adddamege")) {
-            if (!sender.hasPermission("set.op")) {
-                sender.sendMessage("コマンドを実行出来る権限がありません。");
+            if (sender.hasPermission("GhostLifeCommand.permission.Admin")) {
+                if (args.length == 0) {
+                    sender.sendMessage("コマンドを正しく入力してください");
                 return true;
-            }
-            if (args.length == 0) {
-                sender.sendMessage("コマンドを正しく入力してください");
-                return true;
-            } else {
-                int damage = 0;
-                try {
-                    damage = Integer.parseInt(args[0]);
-                } catch (NumberFormatException ex) {
-                    sender.sendMessage("ダメージ量は数値で指定してください");
-                }
-                Player target = null;
-                if (args.length == 1) {
-                    if (!(sender instanceof Player)) {
-                        sender.sendMessage("ゲーム内から実行してください");
-                        return true;
-                    }
-                    target = (Player) sender;
                 } else {
-                    Player tar = Bukkit.getPlayer(args[1]);
-                    if (tar == null || !tar.isOnline()) {
-                        sender.sendMessage("指定されたプレイヤーはオンラインではありません");
-                        return true;
+                int damage = 0;
+                    try {
+                        damage = Integer.parseInt(args[0]);
+                    } catch (NumberFormatException ex) {
+                        sender.sendMessage("ダメージ量は数値で指定してください");
                     }
-                    target = tar;
+                    Player target = null;
+                    if (args.length == 1) {
+                        if (!(sender instanceof Player)) {
+                            sender.sendMessage("ゲーム内から実行してください");
+                            return true;
+                        }
+                        target = (Player) sender;
+                    } else {
+                        Player tar = Bukkit.getPlayer(args[1]);
+                        if (tar == null || !tar.isOnline()) {
+                            sender.sendMessage("指定されたプレイヤーはオンラインではありません");
+                            return true;
+                        }
+                        target = tar;
+                    }
+                    target.damage(damage);
                 }
-                target.damage(damage);
             }
             return true;
         }
