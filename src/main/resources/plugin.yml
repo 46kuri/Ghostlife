@@ -10,19 +10,22 @@ softdepend:
 commands:
   ghostlife:
     description: コンフィグリロード
+    permission: GhostLifeCommand.permission.Admin
   adddamege:
     description: ダメージセット
+    permission: GhostLifeCommand.permission.Admin
   sellmmgui:
     description: MMアイテム売却
+    permission: GhostLifeCommand.permission.Member
   smg:
     description: MMアイテム売却
+    permission: GhostLifeCommand.permission.Member
   playerskullgive:
     description: playerhead配布
+    permission: GhostLifeCommand.permission.Admin
 
 permissions:
-  ghostlife.set.op:
+  GhostLifeCommand.permission.Admin:
     default: op
-  adddamage.set.op:
-    default: op
-  playerskullgive.set.op:
-    default: op
+  GhostLifeCommand.permission.Member:
+    default: true
